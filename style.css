@@ -1,0 +1,52 @@
+/* base */
+
+@import url(https://fonts.googleapis.com/css2?family=DM+Mono);
+
+html,
+body,
+canvas {
+  margin: 0px;
+  padding: 0px;
+}
+
+html {
+  font-size: 16px;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+/* main */
+
+body {
+  background-color: #FCFCFC;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font-family: 'DM Mono', monospace;
+  font-size: 1em;
+  padding: 1em;
+  row-gap: 1em;
+}
+
+main {
+  background-color: #FFFFFF;
+  box-shadow: #F0F0F0 0px 0px 5px 2px;
+  flex: 1;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1em;
+}
+
+main input {
+  margin: 0px;
+  width: 100%;
+}
+
+main canvas {
+  display: block;
+  height: 500px;
+  width: 500px;
+}
