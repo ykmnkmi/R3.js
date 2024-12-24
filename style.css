@@ -47,6 +47,6 @@ main input {
 
 main canvas {
   display: block;
-  height: 500px;
-  width: 500px;
+  height: 640px;
+  width: 640px;
 }
