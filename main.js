@@ -42,7 +42,7 @@ const drawText = (position) => {
 
   context.textBaseline = 'middle';
   context.textAlign = 'center';
-  context.fillText(position, WIDTH / 2, HEIGHT / 2);
+  context.fillText(2 * Math.PI * position, WIDTH / 2, HEIGHT / 2);
 
   context.restore();
 };
@@ -60,5 +60,4 @@ const onInput = () => {
 };
 
 range.addEventListener('input', onInput);
-
 window.addEventListener('load', onInput);
