@@ -4,9 +4,7 @@ const END = 10000;
 const SIDE = 640;
 const HALF = 640 / 2;
 
-const BASE_RADIUS = 1 / 6 * HALF;
-const RADIUS = 3 / 6 * HALF;
-const FULL_RADIUS = BASE_RADIUS + RADIUS;
+const RADIUS = 4 / 6 * HALF;
 
 const DURATION = 60 * 1000;
 
@@ -37,29 +35,29 @@ const drawAxes = () => {
 
   context.beginPath();
 
-  context.moveTo(0 + BASE_RADIUS, HALF);
-  context.lineTo(SIDE - BASE_RADIUS - 10, HALF);
-  context.moveTo(SIDE - BASE_RADIUS - 20, HALF - 10);
-  context.lineTo(SIDE - BASE_RADIUS - 10, HALF);
-  context.lineTo(SIDE - BASE_RADIUS - 20, HALF + 10);
+  context.moveTo(0, HALF);
+  context.lineTo(SIDE - 10, HALF);
+  context.moveTo(SIDE - 20, HALF - 10);
+  context.lineTo(SIDE - 10, HALF);
+  context.lineTo(SIDE - 20, HALF + 10);
 
-  context.moveTo(HALF, SIDE - BASE_RADIUS);
-  context.lineTo(HALF, 10 + BASE_RADIUS);
-  context.moveTo(HALF - 10, 20 + BASE_RADIUS);
-  context.lineTo(HALF, 10 + BASE_RADIUS);
-  context.lineTo(HALF + 10, 20 + BASE_RADIUS);
+  context.moveTo(HALF, SIDE);
+  context.lineTo(HALF, 10);
+  context.moveTo(HALF - 10, 20);
+  context.lineTo(HALF, 10);
+  context.lineTo(HALF + 10, 20);
 
   context.stroke();
 
   context.textAlign = 'right';
   context.textBaseline = 'middle';
   context.fillStyle = '#A0A0A0';
-  context.fillText('X', SIDE - BASE_RADIUS - 5, HALF + 20);
+  context.fillText('X', SIDE - 5, HALF + 20);
   context.textAlign = 'left';
-  context.fillText('Y', HALF + 20, 15 + BASE_RADIUS);
+  context.fillText('Y', HALF + 20, 15);
 
   const tickLength = 2;
-  const tickSpacing = FULL_RADIUS / 6;
+  const tickSpacing = RADIUS / 6;
 
   for (let i = 1; i <= 6; i += 1) {
     const x = HALF + i * tickSpacing;
@@ -90,6 +88,8 @@ const drawAxes = () => {
 
 /** @type {(radius: number, angle: number) => void} */
 const drawCircle = (radius, angle) => {
+  radius = radius * RADIUS;
+
   context.save();
 
   context.translate(HALF, HALF);
@@ -99,14 +99,14 @@ const drawCircle = (radius, angle) => {
 
   context.beginPath();
   context.strokeStyle = '#A0A0A0';
-  context.arc(0, 0, BASE_RADIUS + radius, 0, 2 * Math.PI);
+  context.arc(0, 0, radius, 0, 2 * Math.PI);
   context.stroke();
   context.closePath();
 
   context.restore();
 
   context.beginPath();
-  context.arc(0, 0, BASE_RADIUS + radius, 0, 2 * Math.PI * angle);
+  context.arc(0, 0, radius, 0, 2 * Math.PI * angle);
   context.stroke();
   context.closePath();
 
@@ -120,39 +120,75 @@ const drawCircle = (radius, angle) => {
 
 /** @type {(radius: number, angle: number) => void} */
 const drawSmallCircle = (radius, angle) => {
-  angle = 2 * Math.PI * angle;
+  const small_radius = (1 - radius) * RADIUS * 0.5;
+  radius = radius * RADIUS;
 
-  const small_radius = (RADIUS - radius) / 2;
-  radius = BASE_RADIUS + radius + small_radius;
+  angle = 2 * Math.PI * angle;
 
   context.save();
 
   context.translate(HALF, HALF);
   context.rotate(-Math.PI / 2 + angle);
 
+  context.save();
+
+  context.translate(radius + small_radius, 0);
+
   context.beginPath();
-  context.arc(radius, 0, small_radius, 0, 2 * Math.PI);
+  context.strokeStyle = '#A0A0A0';
+  context.moveTo(0, 0);
+  context.lineTo(small_radius + 10, 0);
+  context.moveTo(small_radius + 10 - 5, -5);
+  context.lineTo(small_radius + 10, 0);
+  context.lineTo(small_radius + 10 - 5, 5);
+  context.stroke();
+  context.closePath();
+
+  context.restore();
+
+  context.beginPath();
+  context.arc(radius + small_radius, 0, small_radius, 0, 2 * Math.PI);
   context.stroke();
   context.closePath();
 
   context.beginPath();
-  context.arc(radius, 0, 1, 0, 2 * Math.PI);
+  context.arc(radius + small_radius, 0, 1, 0, 2 * Math.PI);
   context.fill();
   context.closePath();
+
+  context.save();
+
+  const small_angle = 2 * Math.PI * angle * (1 + radius / small_radius);
+
+  context.translate(radius + small_radius, 0);
+  context.rotate(2 * Math.PI * small_angle);
+
+  context.beginPath();
+  context.strokeStyle = '#FFA0A0';
+  context.moveTo(0, 0);
+  context.lineTo(small_radius + 10, 0);
+  context.moveTo(small_radius + 10 - 5, -5);
+  context.lineTo(small_radius + 10, 0);
+  context.lineTo(small_radius + 10 - 5, 5);
+  context.stroke();
+  context.closePath();
+
+  context.restore();
 
   context.restore();
 };
 
 /** @type {(radius: number, angle: number) => void} */
 const drawText = (radius, angle) => {
-  radius = radius.toFixed(0);
-  angle = (360 * angle).toFixed(0);
+  const small_radius = (1 - radius) * 0.5;
+  radius = (radius / small_radius).toFixed(2);
+  angle = (360 * angle).toFixed(2);
 
   context.save();
 
   context.textBaseline = 'middle';
   context.textAlign = 'start';
-  context.fillText(`${radius}:${angle}`, BASE_RADIUS, 2 * BASE_RADIUS);
+  context.fillText(`${radius}:${angle}`, 50, 50);
 
   context.restore();
 };
@@ -171,7 +207,7 @@ const onInput = () => {
   const angle = parseInt(range.value);
 
   requestAnimationFrame(() => {
-    draw(radius / END * RADIUS, angle / END);
+    draw(radius / END, angle / END);
   });
 };
 

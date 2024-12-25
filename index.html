@@ -12,8 +12,34 @@
 
 <body>
   <main>
-    <input id="scale" max="9999" min="1001" type="range" value="6000" />
-    <input id="progress" max="10000" min="0" type="range" value="1000" />
+    <input id="scale" list="scales" max="10000" min="0" type="range" value="5000" />
+    <datalist id="scales">
+      <option value="0"></option>
+      <option value="3333"></option>
+      <option value="5000"></option>
+      <option value="6000"></option>
+      <option value="6667"></option>
+      <option value="7142"></option>
+      <option value="7500"></option>
+      <option value="7778"></option>
+      <option value="8000"></option>
+      <option value="8182"></option>
+      <option value="8333"></option>
+      <option value="8462"></option>
+      <option value="8571"></option>
+      <option value="8667"></option>
+      <option value="8750"></option>
+      <option value="10000"></option>
+    </datalist>
+    <input id="progress" list="progress_values" max="10000" min="0" type="range" value="1250" />
+    <datalist id="progress_values">
+      <option value="0"></option>
+      <option value="1250"></option>
+      <option value="2500"></option>
+      <option value="5000"></option>
+      <option value="7500"></option>
+      <option value="10000"></option>
+    </datalist>
     <canvas height="640" width="640"></canvas>
   </main>
 </body>
