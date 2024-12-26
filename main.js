@@ -8,6 +8,15 @@ const RADIUS = 4 / 6 * HALF;
 
 const DURATION = 60 * 1000;
 
+/** @type {HTMLButtonElement} */
+const play = document.querySelector('#play');
+
+/** @type {HTMLButtonElement} */
+const stop = document.querySelector('#stop');
+
+/** @type {HTMLButtonElement} */
+const reset = document.querySelector('#reset');
+
 /** @type {HTMLInputElement} */
 const scale = document.querySelector('#scale');
 
@@ -16,6 +25,109 @@ const range = document.querySelector('#progress');
 
 /** @type {HTMLCanvasElement} */
 const canvas = document.querySelector('canvas');
+
+/** @type {number|null} */
+let animationID = null;
+
+/** @type {number|null} */
+let startTime = null;
+
+/** @type {number} */
+let progress = START;
+
+const animateSlider = (timestamp) => {
+  if (!startTime) {
+    startTime = timestamp;
+  }
+
+  const elapsed = timestamp - startTime;
+  console.log(elapsed);
+
+  progress = Math.min(START + (elapsed / DURATION) * (END - START), END);
+  range.value = progress;
+  range.dispatchEvent(new Event('input'));
+
+  if (progress < END) {
+    animationID = requestAnimationFrame(animateSlider);
+  } else {
+    cancelAnimationFrame(animationID);
+    animationID = null;
+
+    if (play.disabled) {
+      play.disabled = false;
+    }
+
+    stop.disabled = true;
+
+    if (reset.disabled) {
+      reset.disabled = false;
+    }
+
+    if (range.disabled) {
+      range.disabled = false;
+    }
+  }
+};
+
+play.addEventListener('click', () => {
+  if (!animationID) {
+    animationID = requestAnimationFrame(animateSlider);
+
+    play.disabled = true;
+
+    if (stop.disabled) {
+      stop.disabled = false;
+    }
+
+    if (!reset.disabled) {
+      reset.disabled = true;
+    }
+
+    if (!range.disabled) {
+      range.disabled = true;
+    }
+  }
+});
+
+stop.addEventListener('click', () => {
+  if (animationID) {
+    cancelAnimationFrame(animationID);
+    animationID = null;
+
+    if (play.disabled) {
+      play.disabled = false;
+    }
+
+    stop.disabled = true;
+
+    if (reset.disabled) {
+      reset.disabled = false;
+    }
+  }
+});
+
+reset.addEventListener('click', () => {
+  if (animationID) {
+    startTime = null;
+    cancelAnimationFrame(animationID);
+    animationID = null;
+  }
+
+  range.value = progress = START;
+  range.dispatchEvent(new Event('input'));
+
+  if (play.disabled) {
+    play.disabled = false;
+  }
+
+  if (!stop.disabled) {
+    stop.disabled = true;
+  }
+
+  if (range.disabled) {
+    range.disabled = false;
+  }
+});
 
 /** @type {CanvasRenderingContext2D} */
 const context = canvas.getContext('2d');
@@ -158,10 +270,10 @@ const drawSmallCircle = (radius, angle) => {
 
   context.save();
 
-  const small_angle = 2 * Math.PI * angle * (1 + radius / small_radius);
+  const small_angle = angle * radius / small_radius;
 
   context.translate(radius + small_radius, 0);
-  context.rotate(2 * Math.PI * small_angle);
+  context.rotate(small_angle);
 
   context.beginPath();
   context.strokeStyle = '#FFA0A0';
@@ -188,7 +300,8 @@ const drawText = (radius, angle) => {
 
   context.textBaseline = 'middle';
   context.textAlign = 'start';
-  context.fillText(`${radius}:${angle}`, 50, 50);
+  context.fillText(`Scale: ${radius}`, 10, 50);
+  context.fillText(`Angle: ${angle}`, 10, 68);
 
   context.restore();
 };
@@ -205,10 +318,7 @@ const draw = (radius, angle) => {
 const onInput = () => {
   const radius = parseInt(scale.value);
   const angle = parseInt(range.value);
-
-  requestAnimationFrame(() => {
-    draw(radius / END, angle / END);
-  });
+  draw(radius / END, angle / END);
 };
 
 scale.addEventListener('input', onInput);

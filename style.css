@@ -34,10 +34,13 @@ body {
 main {
   background-color: #FFFFFF;
   box-shadow: #F0F0F0 0px 0px 5px 2px;
+  display: flex;
   flex: 1;
+  flex-direction: column;
   margin-left: auto;
   margin-right: auto;
   padding: 1em;
+  row-gap: 1em;
 }
 
 main input {
