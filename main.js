@@ -32,6 +32,12 @@ let animationID = null;
 /** @type {number|null} */
 let startTime = null;
 
+/** @type {number|null} */
+let stopTime = null;
+
+/** @type {number} */
+let totalElapsed = 0;
+
 /** @type {number} */
 let progress = START;
 
@@ -40,8 +46,7 @@ const animateSlider = (timestamp) => {
     startTime = timestamp;
   }
 
-  const elapsed = timestamp - startTime;
-  console.log(elapsed);
+  const elapsed = timestamp - startTime + totalElapsed;
 
   progress = Math.min(START + (elapsed / DURATION) * (END - START), END);
   range.value = progress;
@@ -52,6 +57,10 @@ const animateSlider = (timestamp) => {
   } else {
     cancelAnimationFrame(animationID);
     animationID = null;
+
+    startTime = null;
+    stopTime = null;
+    totalElapsed = 0;
 
     if (play.disabled) {
       play.disabled = false;
@@ -94,6 +103,11 @@ stop.addEventListener('click', () => {
     cancelAnimationFrame(animationID);
     animationID = null;
 
+    stopTime = performance.now();
+    totalElapsed += stopTime - startTime;
+
+    startTime = null;
+
     if (play.disabled) {
       play.disabled = false;
     }
@@ -108,10 +122,14 @@ stop.addEventListener('click', () => {
 
 reset.addEventListener('click', () => {
   if (animationID) {
-    startTime = null;
     cancelAnimationFrame(animationID);
-    animationID = null;
   }
+
+  animationID = null;
+
+  startTime = null;
+  stopTime = null;
+  totalElapsed = 0;
 
   range.value = progress = START;
   range.dispatchEvent(new Event('input'));
